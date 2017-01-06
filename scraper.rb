@@ -1,5 +1,6 @@
 #!/bin/env ruby
 # encoding: utf-8
+# frozen_string_literal: true
 
 require 'nokogiri'
 require 'open-uri'
@@ -11,7 +12,7 @@ OpenURI::Cache.cache_path = '.cache'
 
 class String
   def tidy
-    self.gsub(/[[:space:]]+/, ' ').strip
+    gsub(/[[:space:]]+/, ' ').strip
   end
 end
 
@@ -25,14 +26,14 @@ def scrape_list(url)
     url = URI.join(url, a.attr('href')).to_s
     fullname = a.text
     prefix, name = fullname.split('Hon. ')
-    data = { 
-      id: url.split('/').last,
-      name: name,
-      honorific_prefix: prefix + "Hon.",
-      term: 3,
-      source: url
+    data = {
+      id:               url.split('/').last,
+      name:             name,
+      honorific_prefix: prefix + 'Hon.',
+      term:             3,
+      source:           url,
     }.merge(scrape_mp(url))
-    ScraperWiki.save_sqlite([:id, :term], data)
+    ScraperWiki.save_sqlite(%i(id term), data)
   end
 end
 
@@ -41,10 +42,10 @@ def scrape_mp(url)
 
   box = noko.css('div#page_content')
 
-  return { 
+  {
     constituency: box.xpath('.//p[strong[contains(.,"Constituency")]]/text()').text.tidy,
-    party: box.xpath('.//p[strong[contains(.,"Party")]]/text()').text.tidy,
-    image: URI.escape(box.css('img.imagefield/@src').text),
+    party:        box.xpath('.//p[strong[contains(.,"Party")]]/text()').text.tidy,
+    image:        URI.escape(box.css('img.imagefield/@src').text),
   }
 end
 
