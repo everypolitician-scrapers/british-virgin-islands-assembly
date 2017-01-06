@@ -42,4 +42,5 @@ def scrape_mp(url)
   }
 end
 
+ScraperWiki.sqliteexecute('DELETE FROM data') rescue nil
 scrape_list('http://www.bvi.org.uk/government/houseofassembly')
